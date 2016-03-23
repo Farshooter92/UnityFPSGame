@@ -12,6 +12,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 54: {fileID: 5400000}
   - 82: {fileID: 8200000}
+  - 135: {fileID: 13576624}
   m_Layer: 0
   m_Name: FPSController
   m_TagString: Untagged
@@ -43,7 +44,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 140.7, y: 12.8, z: -46.5}
+  m_LocalPosition: {x: 5.5144863, y: 3.78, z: -10.219329}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400002}
@@ -205,8 +206,7 @@ MonoBehaviour:
   m_IsWalking: 0
   m_WalkSpeed: 5
   m_RunSpeed: 10
-  m_RunstepLenghten: .699999988
-  m_JumpSpeed: 10
+  m_RunstepLenghten: 0.7
   m_StickToGroundForce: 10
   m_GravityMultiplier: 2
   m_MouseLook:
@@ -217,6 +217,7 @@ MonoBehaviour:
     MaximumX: 90
     smooth: 0
     smoothTime: 5
+    lockCursor: 1
   m_UseFovKick: 1
   m_FovKick:
     Camera: {fileID: 0}
@@ -239,10 +240,11 @@ MonoBehaviour:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
-  m_UseHeadBob: 1
+      m_RotationOrder: 4
+  m_UseHeadBob: 0
   m_HeadBob:
-    HorizontalBobRange: .100000001
-    VerticalBobRange: .100000001
+    HorizontalBobRange: 0.1
+    VerticalBobRange: 0.1
     Bobcurve:
       serializedVersion: 2
       m_Curve:
@@ -251,7 +253,7 @@ MonoBehaviour:
         inSlope: 0
         outSlope: 0
         tangentMode: 0
-      - time: .5
+      - time: 0.5
         value: 1
         inSlope: 0
         outSlope: 0
@@ -273,16 +275,33 @@ MonoBehaviour:
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     VerticaltoHorizontalRatio: 2
   m_JumpBob:
-    BobDuration: .200000003
-    BobAmount: .100000001
+    BobDuration: 0.2
+    BobAmount: 0.1
   m_StepInterval: 5
   m_FootstepSounds:
   - {fileID: 8300000, guid: 42e65e088b3f4374e851b8dbd38f3df9, type: 3}
   - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
+  m_UseInAirControl: 1
+  m_MinJumpSpeed: 5
+  m_MaxJumpSpeed: 10
+  m_JumpButtonHoldDuration: 0.5
+--- !u!135 &13576624
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.68
+  m_Center: {x: 0, y: -0.09, z: 0}
 --- !u!143 &14300000
 CharacterController:
   m_ObjectHideFlags: 1
