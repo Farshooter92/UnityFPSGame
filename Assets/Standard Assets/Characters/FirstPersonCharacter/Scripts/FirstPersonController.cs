@@ -52,7 +52,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Wall Jump Logic
         private bool m_CanWallJump = false;
         private bool m_DoWallJump = false;
-        private SphereCollider m_LegsCollider;
+        private Vector3 m_JumpDir;
 
 
         // Use this for initialization
@@ -69,8 +69,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.Init(transform , m_Camera.transform);
 
             m_Jumping = false;
-
-            m_LegsCollider = GetComponent<SphereCollider>();
 
             m_CanWallJump = false;
             m_DoWallJump = false;
@@ -122,16 +120,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float speed;
             GetInput(out speed);
             // always move along the camera forward as it is the direction that it being aimed at
-            Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
+            Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
 
             // get a normal for the surface that is being touched to move along it
             RaycastHit hitInfo;
             Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height/2f, ~0, QueryTriggerInteraction.Ignore);
+                               m_CharacterController.height / 2f, ~0, QueryTriggerInteraction.Ignore);
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
-            m_MoveDir.x = desiredMove.x*speed;
-            m_MoveDir.z = desiredMove.z*speed;
+            m_MoveDir.x = desiredMove.x * speed;
+            m_MoveDir.z = desiredMove.z * speed;
 
 
             if (m_CharacterController.isGrounded)
@@ -148,39 +146,27 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             else
             {
-                if(m_DoWallJump)
+                if (m_DoWallJump)
                 {
                     m_DoWallJump = false;
                     Debug.Log("Wall Jump");
+                    m_MoveDir = m_JumpDir;
 
                 }
                 else
                 {
-                     
+
                     m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
                 }
-               
+
             }
-            m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
+            m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
             UpdateCameraPosition(speed);
 
             m_MouseLook.UpdateCursorLock();
         }
-
-        void OnTriggerStay(Collider other)
-        {
-            if (m_Jumping)
-            {
-                m_CanWallJump = true;
-            }
-            else
-            {
-                m_CanWallJump = false;
-            }
-        }
-
 
         private void PlayJumpSound()
         {
@@ -302,6 +288,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
+            m_JumpDir = hit.normal;
+            m_JumpDir.y = 1;
+            m_JumpDir *= m_JumpSpeed;
+            
             Rigidbody body = hit.collider.attachedRigidbody;
             //dont move the rigidbody if the character is on top of it
             if (m_CollisionFlags == CollisionFlags.Below)
