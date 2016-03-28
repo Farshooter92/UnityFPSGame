@@ -128,12 +128,28 @@ namespace UnityStandardAssets.Characters.FirstPerson
                                m_CharacterController.height / 2f, ~0, QueryTriggerInteraction.Ignore);
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
-            m_MoveDir.x = desiredMove.x * speed;
-            m_MoveDir.z = desiredMove.z * speed;
+			if (m_DoWallJump) 
+			{
+				m_DoWallJump = false;
+				m_CanWallJump = false;
+				m_MoveDir.x = (desiredMove.x * speed) + m_JumpDir.x;
+				m_MoveDir.y = m_JumpDir.y;
+				m_MoveDir.z = (desiredMove.z * speed) + m_JumpDir.z;
+			}  
+			else 
+			{
+				m_MoveDir.x = desiredMove.x * speed;
+				m_MoveDir.z = desiredMove.z * speed;
+			}
+
+
 
 
             if (m_CharacterController.isGrounded)
             {
+				m_DoWallJump = false;
+				m_CanWallJump = false;
+
                 m_MoveDir.y = -m_StickToGroundForce;
 
                 if (m_Jump)
@@ -146,20 +162,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             else
             {
-                if (m_DoWallJump)
-                {
-                    m_DoWallJump = false;
-                    Debug.Log("Wall Jump");
-                    m_MoveDir = m_JumpDir;
 
-                }
-                else
-                {
-
-                    m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
-                }
+				m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
 
             }
+
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
@@ -288,10 +295,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            m_JumpDir = hit.normal;
-            m_JumpDir.y = 1;
-            m_JumpDir *= m_JumpSpeed;
-            
+
+			if (m_Jumping) 
+			{
+				m_CanWallJump = true;
+				m_JumpDir = hit.normal;
+				m_JumpDir.y = 1;
+				m_JumpDir *= m_JumpSpeed;
+			} 
+			else 
+			{
+				m_CanWallJump = false;
+			}
+
+
             Rigidbody body = hit.collider.attachedRigidbody;
             //dont move the rigidbody if the character is on top of it
             if (m_CollisionFlags == CollisionFlags.Below)
